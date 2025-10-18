@@ -17,11 +17,26 @@ def get_folder_structure(path: Path) -> Set[str]:
     if path.is_file():
         return {path.name}
     
+    # Common dependency folders to ignore
+    ignore_folders = {
+        'node_modules', '__pycache__', '.git', '.svn', '.hg', 
+        'venv', 'env', '.venv', '.env', 'virtualenv',
+        'build', 'dist', 'target', 'bin', 'obj',
+        '.pytest_cache', '.coverage', 'coverage',
+        '.mypy_cache', '.tox', '.nox',
+        'vendor', 'bower_components', 'jspm_packages',
+        '.idea', '.vscode', '.vs', '.DS_Store',
+        'Thumbs.db', '.Trash-1000'
+    }
+    
     for root, dirs, files in os.walk(path):
         root_path = Path(root)
         rel_path = root_path.relative_to(path)
         
-        # Add directories
+        # Filter out ignored directories
+        dirs[:] = [d for d in dirs if d not in ignore_folders]
+        
+        # Add directories (after filtering)
         for dir_name in dirs:
             if rel_path == Path('.'):
                 structure.add(dir_name)
@@ -53,7 +68,7 @@ def compare_folders(path1: Path, path2: Path) -> Tuple[bool, List[str], List[str
 
 def write_to_log(log_filename: str, content: str):
     """Write content to log file."""
-    with open(log_filename, 'w') as f:
+    with open(log_filename, 'w', encoding='utf-8') as f:
         f.write(content)
 
 
