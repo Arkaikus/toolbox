@@ -8,7 +8,7 @@ dependencies = [
 ]
 
 [project.scripts]
-tb = "toolbox.cli:main"
+tbox = "toolbox.cli:main"
 
 [tool.uv]
 package = true
