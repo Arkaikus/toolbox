@@ -1,0 +1,21 @@
+[project]
+name = "toolbox"
+version = "0.1.0"
+description = "A collection of useful Python scripts"
+requires-python = ">=3.12"
+dependencies = [
+    "click>=8.3.0",
+]
+
+[project.scripts]
+tb = "toolbox.cli:main"
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/toolbox"]
