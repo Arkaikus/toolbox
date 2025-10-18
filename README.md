@@ -21,17 +21,17 @@ The toolbox CLI is accessible via the `tb` command:
 
 ```bash
 # Show help
-tb --help
+tbox --help
 
 # Show version
-tb --version
+tbox --version
 
 # Run a command
-tb hello
-tb hello --name "Your Name" --count 3
+tbox hello
+tbox hello --name "Your Name" --count 3
 
 # Show version information
-tb version
+tbox version
 ```
 
 ## Extending with Custom Commands
@@ -69,7 +69,7 @@ The toolbox includes example commands to get you started:
 uv pip install -e .
 
 # Run the CLI
-tb --help
+tbox --help
 ```
 
 ## Requirements
