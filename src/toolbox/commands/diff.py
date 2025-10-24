@@ -53,17 +53,18 @@ def get_folder_structure(path: Path) -> Set[str]:
     return structure
 
 
-def compare_folders(path1: Path, path2: Path) -> Tuple[bool, List[str], List[str]]:
-    """Compare two folder structures and return differences."""
+def compare_folders(path1: Path, path2: Path) -> Tuple[bool, List[str], List[str], List[str]]:
+    """Compare two folder structures and return differences and common paths."""
     structure1 = get_folder_structure(path1)
     structure2 = get_folder_structure(path2)
     
     only_in_path1 = structure1 - structure2
     only_in_path2 = structure2 - structure1
+    common_paths = structure1 & structure2
     
     are_same = len(only_in_path1) == 0 and len(only_in_path2) == 0
     
-    return are_same, sorted(only_in_path1), sorted(only_in_path2)
+    return are_same, sorted(only_in_path1), sorted(only_in_path2), sorted(common_paths)
 
 
 def write_to_log(log_filename: str, content: str):
@@ -75,7 +76,8 @@ def write_to_log(log_filename: str, content: str):
 @click.command()
 @click.argument('path1', type=click.Path(exists=True))
 @click.argument('path2', type=click.Path(exists=True))
-def diff(path1, path2):
+@click.option('-v', '--verbose', is_flag=True, help='Show common paths between the two directories')
+def diff(path1, path2, verbose):
     """Compare two files or folders.
     
     For folders: compares file/folder structure and shows differences.
@@ -105,7 +107,7 @@ def diff(path1, path2):
     
     # Check if both paths are directories
     if path1.is_dir() and path2.is_dir():
-        are_same, only_in_path1, only_in_path2 = compare_folders(path1, path2)
+        are_same, only_in_path1, only_in_path2, common_paths = compare_folders(path1, path2)
         
         if are_same:
             message = "they are the same"
@@ -134,6 +136,17 @@ def diff(path1, path2):
                     click.echo(click.style(item_message, fg='red'))
                     log_content += f"{item_message}\n"
                 log_content += "\n"
+        
+        # Show common paths if verbose flag is used
+        if verbose and common_paths:
+            message = "Common paths:"
+            click.echo(click.style(message, fg='blue'))
+            log_content += f"{message}\n"
+            for item in common_paths:
+                item_message = f"  {item}"
+                click.echo(click.style(item_message, fg='blue'))
+                log_content += f"{item_message}\n"
+            log_content += "\n"
     
     else:
         message = "Error: Both paths must be either files or directories"
